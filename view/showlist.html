@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style></style>
+</head>
+
+<body>
+  <table border="1">
+    <thead>
+      <tr>
+        <td>序号-lid</td>
+        <td>商品名称-title</td>
+        <td>价格-price</td>
+        <td>内存-memory</td>
+        <td>是否在售-is_onsale</td>
+      </tr>
+    </thead>
+    <tbody id="userlist">
+
+    </tbody>
+  </table>
+  <select name="" id="select" onchange="getCount()">
+    <option value="5">5</option>
+    <option value="8">8</option>
+    <option value="10">10</option>
+  </select>
+  <div id="mydiv"></div>
+</body>
+<script>
+  var userlist = document.getElementById('userlist');
+  var select = document.getElementById('select');
+  var mydiv = document.getElementById('mydiv');
+  var pno = 1;
+  var count = select.value;
+  ajax(count, pno);
+  function getCount() {
+    getData(pno);
+  }
+  function ajax(count, pno) {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+      if (xhr.readyState == 4) {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          var result = JSON.parse(xhr.responseText);
+          console.log(result);
+          showList(result.data);
+          showButton(result.sum);
+        } else {
+          alert('返回失败')
+        }
+      }
+    }
+    if (!count) {count = 5;}
+    if (!pno) {pno = 1;}
+    xhr.open('GET', `/list?count=${count}&pno=${pno}`, true)
+    xhr.send();
+  }
+  function showList(data) {
+    userlist.innerHTML = '';
+    for (var i of data) {
+      userlist.innerHTML += `
+  <tr>
+    <td>${i["lid"]}</td>
+    <td title="${i["title"]}">${i["title"].slice(0,40)}...</td>
+    <td>${i["price"]}.00</td>
+    <td>${i["memory"]}</td>
+    <td>${i["is_onsale"]}</td>
+  </tr>`;
+    } }
+  function showButton(a) {
+    mydiv.innerHTML = '';
+    var count = select.value;
+    var num = Math.ceil(a / count);
+    for (let j = 0; j < num; j++) {
+      mydiv.innerHTML += `<button onclick="getData(${j+1})">${j+1}</button>`
+    }
+  }
+  function getData(a) {
+    var pno = a;
+    var count = select.value;
+    ajax(count, pno);
+  }
+</script>
+
+</html>
