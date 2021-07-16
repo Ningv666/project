@@ -2,6 +2,7 @@
 var express = require('express');
 //引入用户路由器
 var userRouter = require('./router/list');
+var selectRouter = require('./router/select');
 //引入path模块用于解析地址
 var path = require('path');
 
@@ -18,7 +19,7 @@ app.use(express.urlencoded({
 app.use(express.static(path.join(__dirname, 'view')));
 
 app.use(userRouter);
-
+app.use("/select",selectRouter);
 //错误处理中间件
 app.use(function (err, req, res, next) {
   //查看得到的错误信息
